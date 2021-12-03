@@ -1,0 +1,25 @@
+{
+  "name": "rootz-coin",
+  "version": "1.0.0",
+  "description": "my own personal blockchain currency",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsc -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruthrootz/rootz-coin.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ruthrootz/rootz-coin/issues"
+  },
+  "homepage": "https://github.com/ruthrootz/rootz-coin#readme",
+  "devDependencies": {
+    "@types/node": "^16.11.11",
+    "typescript": "^4.5.2"
+  }
+}
