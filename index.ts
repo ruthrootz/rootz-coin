@@ -35,7 +35,7 @@ class Block {
 
 class Chain {
 
-  public static blockChain = new Chain();
+  public static blockchain = new Chain();
 
   chain: Block[];
 
@@ -100,4 +100,8 @@ class Wallet {
   }
 
 }
+
+
+
+
 
