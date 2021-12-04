@@ -101,7 +101,13 @@ class Wallet {
 
 }
 
+// EXAMPLE
 
+ruth = new Wallet();
+jo = new Wallet();
+jenny = new Wallet();
 
-
+ruth.sendMoney(100, jo.publicKey);
+jenny.sendMoney(10000, jo.publicKey);
+jo.sendMoney(5, jenny.publicKey);
 
