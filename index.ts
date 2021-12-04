@@ -16,6 +16,19 @@ class Transaction {
 
 class Block {
 
+  constructor(
+    public previousHash: string,
+    public transaction: Transaction,
+    public timestamp = Date.now()
+  ) {}
+
+  get hash() {
+    const stringifiedBlock = JSON.stringify(this);
+    const hashedBlock = crypto.createHash('SHA256');
+    hashedBlock.update(stringifiedBlock).end();
+    return hashedBlock.digest('hex');
+  }
+
 }
 
 class Chain {
