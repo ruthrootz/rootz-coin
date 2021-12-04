@@ -58,7 +58,7 @@ class Chain {
         console.log(`... solution: ${solution}`);
         return solution;
       }
-      solution += 1;
+      solution++;
     }
   }
 
@@ -68,7 +68,7 @@ class Chain {
     const isValid = verifier.verify(senderPublicKey, signature);
     if (isValid) {
       const newBlock = new Block(this.lastBlock.hash, transaction);
-      this.mine(newBlock.nonce);
+      // this.mine(newBlock.nonce);
       this.chain.push(newBlock);
     }
   }
