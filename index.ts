@@ -67,5 +67,13 @@ class Wallet {
   this.publicKey = keypair.publicKey;
   this.privateKey = keypair.privateKey;
 
+  sendMoney(amount: number, payeePublicKey: string) {
+    const transaction = new Transaction(amount, this.publicKey, payeePublicKey);
+    const sign = crypto.createSign('SHA256');
+    sign.update(transaction.toString()).end();
+    const signature = sign.sign(this.privateKey);
+    Blockchain.instance.addBlock(transaction, this.publicKey, signature);
+  }
+
 }
 
