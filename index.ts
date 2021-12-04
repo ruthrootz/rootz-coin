@@ -40,7 +40,7 @@ class Chain {
   chain: Block[];
 
   constructor() {
-    this.chain = [new Block(null, new Transaction(1000, 'genesis', 'satoshi'))];
+    this.chain = [new Block(this.lastBlock.hash, new Transaction(1000, 'genesis', 'satoshi'))];
   }
 
   get lastBlock() {
@@ -62,7 +62,7 @@ class Chain {
     }
   }
 
-  addBlock(transaction: Transaction, senderPublicKey: string, signature: string) {
+  addBlock(transaction: Transaction, senderPublicKey: string, signature: Buffer) {
     const verifier = crypto.createVerify('SHA256');
     verifier.update(transaction.toString());
     const isValid = verifier.verify(senderPublicKey, signature);
@@ -86,28 +86,30 @@ class Wallet {
       publicKeyEncoding: { type: 'spki', format: 'pem' },
       privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
     });
+    this.publicKey = keypair.publicKey;
+    this.privateKey = keypair.privateKey;
   }
 
-  this.publicKey = keypair.publicKey;
-  this.privateKey = keypair.privateKey;
 
   sendMoney(amount: number, payeePublicKey: string) {
     const transaction = new Transaction(amount, this.publicKey, payeePublicKey);
     const sign = crypto.createSign('SHA256');
     sign.update(transaction.toString()).end();
     const signature = sign.sign(this.privateKey);
-    Blockchain.instance.addBlock(transaction, this.publicKey, signature);
+    Chain.blockchain.addBlock(transaction, this.publicKey, signature);
   }
 
 }
 
 // EXAMPLE
 
-ruth = new Wallet();
-jo = new Wallet();
-jenny = new Wallet();
+const ruth = new Wallet();
+const jo = new Wallet();
+const jenny = new Wallet();
 
 ruth.sendMoney(100, jo.publicKey);
 jenny.sendMoney(10000, jo.publicKey);
 jo.sendMoney(5, jenny.publicKey);
+
+console.log(Chain.blockchain);
 
