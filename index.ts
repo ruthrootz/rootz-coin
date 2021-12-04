@@ -40,7 +40,7 @@ class Chain {
   chain: Block[];
 
   constructor() {
-    this.chain = [new Block(this.lastBlock.hash, new Transaction(1000, 'genesis', 'satoshi'))];
+    this.chain = [new Block('', new Transaction(1000, 'genesis', 'satoshi'))];
   }
 
   get lastBlock() {
@@ -89,7 +89,6 @@ class Wallet {
     this.publicKey = keypair.publicKey;
     this.privateKey = keypair.privateKey;
   }
-
 
   sendMoney(amount: number, payeePublicKey: string) {
     const transaction = new Transaction(amount, this.publicKey, payeePublicKey);
