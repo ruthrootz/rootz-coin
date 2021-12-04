@@ -58,7 +58,7 @@ class Chain {
         console.log(`... solution: ${solution}`);
         return solution;
       }
-      solution++;
+      solution += 1;
     }
   }
 
