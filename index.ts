@@ -48,7 +48,17 @@ class Chain {
   }
 
   mine(nonce: number) {
-    
+    let solution = 1;
+    console.log('... mining ...');
+    while(true) {
+      const hash = crypto.createHash('MD5');
+      hash.update((nonce + solution).toString()).end();
+      const attempt = hash.digest('hex');
+      if (attempt.substr(0, 4) === '0000') {
+        console.log(`... solution: ${solution}`);
+        return solution;
+      }
+    }
   }
 
   addBlock(transaction: Transaction, senderPublicKey: string, signature: string) {
