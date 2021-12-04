@@ -33,6 +33,22 @@ class Block {
 
 class Chain {
 
+  public static blockChain = new Chain();
+
+  chain: Block[];
+
+  constructor() {
+    this.chain = [new Block(null, new Transaction(1000, 'genesis', 'satoshi'))];
+  }
+
+  get lastBlock() {
+    return this.chain[this.chain.length - 1];
+  }
+
+  addBlock(transaction: Transaction, senderPublicKey: string, signature: string) {
+    
+  }
+
 }
 
 class Wallet {
