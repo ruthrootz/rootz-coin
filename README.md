@@ -1,4 +1,4 @@
-# rootz-coin
+# rootzcoin
 
 my personal blockchain for using rootzcoin, because it seems everyone has one these days
 
