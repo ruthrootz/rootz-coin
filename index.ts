@@ -1,85 +1,71 @@
 import * as crypto from 'crypto';
 
-// Transfer of funds between two wallets
 class Transaction {
+
   constructor(
-    public amount: number, 
-    public payer: string, // public key
-    public payee: string // public key
+    public amount: number,
+    public payerPublicKey: string,
+    public payeePublicKey: string
   ) {}
 
   toString() {
     return JSON.stringify(this);
   }
+
 }
 
-// Individual block on the chain
 class Block {
 
   public nonce = Math.round(Math.random() * 999999999);
 
   constructor(
-    public prevHash: string, 
-    public transaction: Transaction, 
-    public ts = Date.now()
+    public previousHash: string,
+    public transaction: Transaction,
+    public timestamp = Date.now()
   ) {}
 
   get hash() {
-    const str = JSON.stringify(this);
-    const hash = crypto.createHash('SHA256');
-    hash.update(str).end();
-    return hash.digest('hex');
+    const stringifiedBlock = JSON.stringify(this);
+    const hashedBlock = crypto.createHash('SHA256');
+    hashedBlock.update(stringifiedBlock).end();
+    return hashedBlock.digest('hex');
   }
+
 }
 
-
-// The blockchain
 class Chain {
-  // Singleton instance
-  public static instance = new Chain();
+
+  public static blockchain = new Chain();
 
   chain: Block[];
 
   constructor() {
-    this.chain = [
-      // Genesis block
-      new Block('', new Transaction(100, 'genesis', 'satoshi'))
-    ];
+    this.chain = [new Block('', new Transaction(1000, 'genesis', 'satoshi'))];
   }
 
-  // Most recent block
   get lastBlock() {
     return this.chain[this.chain.length - 1];
   }
 
-  // Proof of work system
   mine(nonce: number) {
     let solution = 1;
-    console.log('⛏️  mining...')
-
+    console.log('... mining ⛏️ ...');
     while(true) {
-
       const hash = crypto.createHash('MD5');
       hash.update((nonce + solution).toString()).end();
-
       const attempt = hash.digest('hex');
-
-      if(attempt.substr(0,4) === '0000'){
-        console.log(`Solved: ${solution}`);
+      if (attempt.substr(0, 4) === '0000') {
+        console.log(`... solved: ${solution}`);
         return solution;
       }
-
       solution += 1;
     }
   }
 
-  // Add a new block to the chain if valid signature & proof of work is complete
   addBlock(transaction: Transaction, senderPublicKey: string, signature: Buffer) {
-    const verify = crypto.createVerify('SHA256');
-    verify.update(transaction.toString());
-
-    const isValid = verify.verify(senderPublicKey, signature);
-
+    const verifier = crypto.createVerify('SHA256');
+    verifier.update(transaction.toString());
+    const isValid = verifier.verify(senderPublicKey, signature);
     if (isValid) {
       const newBlock = new Block(this.lastBlock.hash, transaction);
       this.mine(newBlock.nonce);
@@ -89,8 +75,8 @@ class Chain {
 
 }
 
-// Wallet gives a user a public/private keypair
 class Wallet {
+
   public publicKey: string;
   public privateKey: string;
 
@@ -100,31 +86,28 @@ class Wallet {
       publicKeyEncoding: { type: 'spki', format: 'pem' },
       privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
     });
-
-    this.privateKey = keypair.privateKey;
     this.publicKey = keypair.publicKey;
+    this.privateKey = keypair.privateKey;
   }
 
   sendMoney(amount: number, payeePublicKey: string) {
     const transaction = new Transaction(amount, this.publicKey, payeePublicKey);
-
     const sign = crypto.createSign('SHA256');
     sign.update(transaction.toString()).end();
-
-    const signature = sign.sign(this.privateKey); 
-    Chain.instance.addBlock(transaction, this.publicKey, signature);
+    const signature = sign.sign(this.privateKey);
+    Chain.blockchain.addBlock(transaction, this.publicKey, signature);
   }
+
 }
 
-// Example usage
+// EXAMPLE
 
-const satoshi = new Wallet();
-const bob = new Wallet();
-const alice = new Wallet();
+const ruth = new Wallet();
+const jo = new Wallet();
+const jenny = new Wallet();
 
-satoshi.sendMoney(50, bob.publicKey);
-bob.sendMoney(23, alice.publicKey);
-alice.sendMoney(5, bob.publicKey);
+ruth.sendMoney(15, jenny.publicKey);
+jenny.sendMoney(10, jo.publicKey);
+jo.sendMoney(5, ruth.publicKey);
 
-console.log(Chain.instance)
-
+console.log(Chain.blockchain);
