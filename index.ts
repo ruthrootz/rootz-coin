@@ -4,8 +4,8 @@ class Transaction {
 
   constructor(
     public amount: number,
-    public payer: string, // public key
-    public payee: string // public key
+    public payerPublicKey: string,
+    public payeePublicKey: string
   ) {}
 
   toString() {
@@ -49,16 +49,16 @@ class Chain {
 
   mine(nonce: number) {
     let solution = 1;
-    console.log('... mining ...');
+    console.log('... mining ⛏️ ...');
     while(true) {
       const hash = crypto.createHash('MD5');
       hash.update((nonce + solution).toString()).end();
       const attempt = hash.digest('hex');
       if (attempt.substr(0, 4) === '0000') {
-        console.log(`... solution: ${solution}`);
+        console.log(`... solved: ${solution}`);
         return solution;
       }
-      solution++;
+      solution += 1;
     }
   }
 
@@ -68,7 +68,7 @@ class Chain {
     const isValid = verifier.verify(senderPublicKey, signature);
     if (isValid) {
       const newBlock = new Block(this.lastBlock.hash, transaction);
-      // this.mine(newBlock.nonce);
+      this.mine(newBlock.nonce);
       this.chain.push(newBlock);
     }
   }
@@ -111,4 +111,3 @@ jenny.sendMoney(10000, jo.publicKey);
 jo.sendMoney(5, jenny.publicKey);
 
 console.log(Chain.blockchain);
-
